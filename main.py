@@ -421,7 +421,7 @@ def main_menu():
         if BUTTON2.collidepoint((mx, my)):
             pygame.draw.rect(WINDOW, RED, BUTTON2)
             gamefont.render_to(WINDOW, (40, 40), "WASD  to  move.", (255, 255, 255))
-            gamefont.render_to(WINDOW, (40, 80), "Left  shift  for  shield.", (255, 255, 255))
+            gamefont.render_to(WINDOW, (40, 80), "Right  shift  for  shield.", (255, 255, 255))
             gamefont.render_to(WINDOW, (40, 120), "JL  stands  for  jump  limit,  eat  croissants  to  increase  it  for  one  level.", (255, 255, 255))
 
         gamefont.render_to(WINDOW, (630, 570), "Made by Jose Perez", (255, 255, 255))
