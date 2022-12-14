@@ -3,7 +3,6 @@ from pygame.locals import *
 import random
 import sys
 import pygame.freetype
-
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
@@ -47,7 +46,61 @@ SHIELD_SOUND = pygame.mixer.Sound("media/sounds/shield.wav")
 SHIELD_SOUND.set_volume(0.4)
 EAT_SOUND = pygame.mixer.Sound("media/sounds/eat.wav")
 
+class Bomb():
 
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def render(self):
+        DISPLAY.blit(BOMB_IMG, (self.x, self.y))
+
+    def get_rect(self):
+        return pygame.Rect(self.x + 1, self.y + 1, 15, 15)
+
+    def collision_test(self, player):
+        Bomb_rect = self.get_rect()
+        return Bomb_rect.colliderect(player)
+
+    def move(self):
+        self.y += 2
+
+class Croissant():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def render(self):
+        DISPLAY.blit(CROISSANT_IMG, (self.x, self.y))
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, 16, 16)
+
+    def collision_test(self, player):
+        Croissant_Rect = self.get_rect()
+        return Croissant_Rect.colliderect(player)
+
+class Laser():
+    def __init__(self, x, y, dir):
+        self.x = x
+        self.y = y
+        self.dir = dir
+
+    def render(self):
+        DISPLAY.blit(LASER_IMG, (self.x, self.y))
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, 10, 1)
+
+    def collision_test(self, player):
+        Laser_Rect = self.get_rect()
+        return Laser_Rect.colliderect(player)
+
+    def move(self):
+        if self.dir == 'left':
+            self.x += 3
+        else:
+            self.x -= 3
 
 
 def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, starty=0):
