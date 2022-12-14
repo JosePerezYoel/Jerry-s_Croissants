@@ -3,6 +3,7 @@ from pygame.locals import *
 import random
 import sys
 import pygame.freetype
+
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
@@ -46,81 +47,8 @@ SHIELD_SOUND = pygame.mixer.Sound("media/sounds/shield.wav")
 SHIELD_SOUND.set_volume(0.4)
 EAT_SOUND = pygame.mixer.Sound("media/sounds/eat.wav")
 
-class Bomb():
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
 
-    def render(self):
-        DISPLAY.blit(BOMB_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x + 1, self.y + 1, 15, 15)
-
-    def collision_test(self, player):
-        Bomb_rect = self.get_rect()
-        return Bomb_rect.colliderect(player)
-
-    def move(self):
-        self.y += 2
-
-class Croissant():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def render(self):
-        DISPLAY.blit(CROISSANT_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x, self.y, 16, 16)
-
-    def collision_test(self, player):
-        Croissant_Rect = self.get_rect()
-        return Croissant_Rect.colliderect(player)
-
-class LeftLaser():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def render(self):
-        DISPLAY.blit(LASER_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x, self.y, 10, 1)
-
-    def collision_test(self, player):
-        Laser_Rect = self.get_rect()
-        return Laser_Rect.colliderect(player)
-
-    def move(self):
-        self.x += 3
-
-class RightLaser():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def render(self):
-        DISPLAY.blit(LASER_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x + 5, self.y + 5, 10, 1)
-
-    def collision_test(self, player):
-        Laser_Rect = self.get_rect()
-        return Laser_Rect.colliderect(player)
-
-    def move(self):
-        self.x -= 3
-
-def clarifyingbackround():  # This is just a reference to see how the loadBackround works. They do the same thing.
-    for x in range(25):
-        DISPLAY.blit(BRICK_IMG, (x * BRICK_HEIGHT, 0))
-        for y in range(19):
-            DISPLAY.blit(BRICK_IMG, (x * BRICK_HEIGHT, y * BRICK_WIDTH))
 
 def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, starty=0):
     # xcount and ycount is how many tiles you want on both axis
@@ -128,6 +56,8 @@ def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, star
     for x in range(xcount):
         for y in range(ycount):
             DISPLAY.blit(tile, (x * tile_height + startx, y * tile_width + starty))
+
+
 global animation_frames
 animation_frames = {}
 def load_animation(path, frame_duration):
@@ -209,8 +139,7 @@ def game():
 
     Croissant_objs = []
 
-    LeftLaser_objs = []
-    RightLaser_objs = []
+    Laser_objs = []
 
     Bomb_objs = []
     possible_cords = []
@@ -248,12 +177,12 @@ def game():
 
         if laser_timer >= laser_cooldown:
             laser_timer = 0
-            LeftLaser_objs.append(LeftLaser(-200, player_rect.y + 10))
-            LeftLaser_objs.append(LeftLaser(-225, player_rect.y + 10))
-            LeftLaser_objs.append(LeftLaser(-250, player_rect.y + 10))
-            RightLaser_objs.append(RightLaser(500, player_rect.y - 10))
-            RightLaser_objs.append(RightLaser(475, player_rect.y - 10))
-            RightLaser_objs.append(RightLaser(450, player_rect.y - 10))
+            Laser_objs.append(Laser(-200, player_rect.y + 10, 'left'))
+            Laser_objs.append(Laser(-225, player_rect.y + 10, 'left'))
+            Laser_objs.append(Laser(-250, player_rect.y + 10, 'left'))
+            Laser_objs.append(Laser(500, player_rect.y - 10, 'right'))
+            Laser_objs.append(Laser(475, player_rect.y - 10, 'right'))
+            Laser_objs.append(Laser(450, player_rect.y - 10, 'right'))
 
         bomb_cooldown = laser_cooldown
 
@@ -261,21 +190,13 @@ def game():
             bomb_timer = 0
             Bomb_objs.append(Bomb(random.choice(possible_cords), -40))
 
-        for leftlaser in LeftLaser_objs:
-            leftlaser.render()
-            leftlaser.move()
-            if leftlaser.collision_test(shield_rect) and shield == True:
-                LeftLaser_objs.remove(leftlaser)
 
-            if leftlaser.collision_test(player_rect):
-                gameover = True
-
-        for rightlaser in RightLaser_objs:
-            rightlaser.render()
-            rightlaser.move()
-            if rightlaser.collision_test(shield_rect) and shield == True:
-                RightLaser_objs.remove(rightlaser)
-            if rightlaser.collision_test(player_rect):
+        for laser in Laser_objs:
+            laser.render()
+            laser.move()
+            if laser.collision_test(shield_rect) and shield == True:
+                Laser_objs.remove(laser)
+            if laser.collision_test(player_rect):
                 gameover = True
 
         for croissant in Croissant_objs:
