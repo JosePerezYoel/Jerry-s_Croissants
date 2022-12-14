@@ -17,34 +17,34 @@ BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 GREEN = 0, 255, 0
 
-gamefont = pygame.freetype.Font("dist/data/pixelated.ttf", 50)
+gamefont = pygame.freetype.Font("media/font/pixelated.ttf", 50)
 
 WINDOW = pygame.display.set_mode((WINDOWSIZE))
 pygame.display.set_caption("Jerry's Croissants")
 
-BRICK_IMG = pygame.image.load("dist/data/Brick_Wall.png")
+BRICK_IMG = pygame.image.load("media/art/Brick_Wall.png")
 BRICK_HEIGHT = BRICK_IMG.get_height()
 BRICK_WIDTH = BRICK_IMG.get_width()
 
 
 
 
-PLAYER_IMG = pygame.image.load("dist/data/player_animation/idle/idle0.png").convert()
+PLAYER_IMG = pygame.image.load("media/player_animation/idle/idle0.png").convert()
 PLAYER_IMG.set_colorkey(RED)
-CROISSANT_IMG = pygame.image.load("dist/data/Croissant.png").convert()
+CROISSANT_IMG = pygame.image.load("media/art/Croissant.png").convert()
 CROISSANT_IMG.set_colorkey(RED)
-LASER_IMG = pygame.image.load("dist/data/Laser.png").convert()
+LASER_IMG = pygame.image.load("media/art/Laser.png").convert()
 LASER_IMG.set_colorkey(WHITE)
-BOMB_IMG = pygame.image.load("dist/data/Bomb.png").convert()
+BOMB_IMG = pygame.image.load("media/art/Bomb.png").convert()
 BOMB_IMG.set_colorkey(RED)
-SHIELD_IMG = pygame.image.load("dist/data/Shield.png").convert()
+SHIELD_IMG = pygame.image.load("media/art/Shield.png").convert()
 SHIELD_IMG.set_colorkey(WHITE)
-JUMP_SOUND = pygame.mixer.Sound("dist/data/sounds/jump_sound.wav")
+JUMP_SOUND = pygame.mixer.Sound("media/sounds/jump_sound.wav")
 JUMP_SOUND.set_volume(0.4)
-GAMEOVER_SOUND = pygame.mixer.Sound("dist/data/sounds/game_over.wav")
-SHIELD_SOUND = pygame.mixer.Sound("dist/data/sounds/shield.wav")
+GAMEOVER_SOUND = pygame.mixer.Sound("media/sounds/game_over.wav")
+SHIELD_SOUND = pygame.mixer.Sound("media/sounds/shield.wav")
 SHIELD_SOUND.set_volume(0.4)
-EAT_SOUND = pygame.mixer.Sound("dist/data/sounds/eat.wav")
+EAT_SOUND = pygame.mixer.Sound("media/sounds/eat.wav")
 
 class Bomb():
 
@@ -146,7 +146,7 @@ def load_animation(path, frame_duration):
         n += 1
     return animation_frame_data
 animation_database = {}
-animation_database["idle"] = load_animation('dist/data/player_animation/idle', [100,1,5,5,5,5,100])
+animation_database["idle"] = load_animation('media/player_animation/idle', [100,1,5,5,5,5,100])
 
 def change_action(action_var, frame, new_value):
     if action_var != new_value:
@@ -389,14 +389,14 @@ def game():
 
 def main_menu():
     running = True
-    pygame.mixer.music.load("dist/data/sounds/game_music.wav")
+    pygame.mixer.music.load("media/sounds/game_music.wav")
     pygame.mixer.music.play(-1)
     while running:
-        gamefont = pygame.freetype.Font("dist/data/pixelated.ttf", 20)
+        gamefont = pygame.freetype.Font("media/font/pixelated.ttf", 20)
         WINDOW.fill(BLACK)
         BUTTON1 = pygame.Rect(350, 300, 100, 50)
         BUTTON2 = pygame.Rect(350, 360, 100, 50)
-        font = pygame.font.Font("dist/data/pixelated.ttf", 50)
+        font = pygame.font.Font("media/font/pixelated.ttf", 50)
         text = font.render("Jerry's Croissants", True, WHITE)
         text_rect = text.get_rect(center=(400, 200))
         text_play = font.render("Play", True, BLACK)
