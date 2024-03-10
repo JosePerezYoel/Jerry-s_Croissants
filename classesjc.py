@@ -1,11 +1,20 @@
 import pygame
-pygame.init()
-BOMB_IMG = pygame.image.load("media/art/Bomb.png").convert()
-BOMB_IMG.set_colorkey(255,0,0)
-CROISSANT_IMG = pygame.image.load("media/art/Croissant.png").convert()
-CROISSANT_IMG.set_colorkey(255,0,0)
-LASER_IMG = pygame.image.load("media/art/Laser.png").convert()
-LASER_IMG.set_colorkey(0,0,0)
+
+BOMB_IMG = None
+CROISSANT_IMG = None
+LASER_IMG = None
+
+
+def load_images():
+    global BOMB_IMG, CROISSANT_IMG, LASER_IMG
+    pygame.init()
+    BOMB_IMG = pygame.image.load("media/art/Bomb.png").convert()
+    BOMB_IMG.set_colorkey((255, 0, 0))
+    CROISSANT_IMG = pygame.image.load("media/art/Croissant.png").convert()
+    CROISSANT_IMG.set_colorkey((255, 0, 0))
+    LASER_IMG = pygame.image.load("media/art/Laser.png").convert()
+    LASER_IMG.set_colorkey((255, 255, 255))
+
 
 class Bomb():
 
@@ -26,6 +35,7 @@ class Bomb():
     def move(self):
         self.y += 2
 
+
 class Croissant():
     def __init__(self, x, y):
         self.x = x
@@ -40,6 +50,7 @@ class Croissant():
     def collision_test(self, player):
         Croissant_Rect = self.get_rect()
         return Croissant_Rect.colliderect(player)
+
 
 class Laser():
     def __init__(self, x, y, dir):

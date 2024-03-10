@@ -1,3 +1,4 @@
+from classesjc import Bomb, Croissant, Laser, load_images
 import pygame
 from pygame.locals import *
 import random
@@ -26,17 +27,8 @@ BRICK_IMG = pygame.image.load("media/art/Brick_Wall.png")
 BRICK_HEIGHT = BRICK_IMG.get_height()
 BRICK_WIDTH = BRICK_IMG.get_width()
 
-
-
-
 PLAYER_IMG = pygame.image.load("media/player_animation/idle/idle0.png").convert()
 PLAYER_IMG.set_colorkey(RED)
-CROISSANT_IMG = pygame.image.load("media/art/Croissant.png").convert()
-CROISSANT_IMG.set_colorkey(RED)
-LASER_IMG = pygame.image.load("media/art/Laser.png").convert()
-LASER_IMG.set_colorkey(WHITE)
-BOMB_IMG = pygame.image.load("media/art/Bomb.png").convert()
-BOMB_IMG.set_colorkey(RED)
 SHIELD_IMG = pygame.image.load("media/art/Shield.png").convert()
 SHIELD_IMG.set_colorkey(WHITE)
 JUMP_SOUND = pygame.mixer.Sound("media/sounds/jump_sound.wav")
@@ -46,61 +38,7 @@ SHIELD_SOUND = pygame.mixer.Sound("media/sounds/shield.wav")
 SHIELD_SOUND.set_volume(0.4)
 EAT_SOUND = pygame.mixer.Sound("media/sounds/eat.wav")
 
-class Bomb():
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def render(self):
-        DISPLAY.blit(BOMB_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x + 1, self.y + 1, 15, 15)
-
-    def collision_test(self, player):
-        Bomb_rect = self.get_rect()
-        return Bomb_rect.colliderect(player)
-
-    def move(self):
-        self.y += 2
-
-class Croissant():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def render(self):
-        DISPLAY.blit(CROISSANT_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x, self.y, 16, 16)
-
-    def collision_test(self, player):
-        Croissant_Rect = self.get_rect()
-        return Croissant_Rect.colliderect(player)
-
-class Laser():
-    def __init__(self, x, y, dir):
-        self.x = x
-        self.y = y
-        self.dir = dir
-
-    def render(self):
-        DISPLAY.blit(LASER_IMG, (self.x, self.y))
-
-    def get_rect(self):
-        return pygame.Rect(self.x, self.y, 10, 1)
-
-    def collision_test(self, player):
-        Laser_Rect = self.get_rect()
-        return Laser_Rect.colliderect(player)
-
-    def move(self):
-        if self.dir == 'left':
-            self.x += 3
-        else:
-            self.x -= 3
+load_images()
 
 
 def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, starty=0):
@@ -113,6 +51,7 @@ def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, star
 
 global animation_frames
 animation_frames = {}
+
 def load_animation(path, frame_duration):
     global animation_frames
     animation_name = path.split("/")[-1]
@@ -128,14 +67,17 @@ def load_animation(path, frame_duration):
             animation_frame_data.append(animation_frame_id)
         n += 1
     return animation_frame_data
+
+
 animation_database = {}
-animation_database["idle"] = load_animation('media/player_animation/idle', [100,1,5,5,5,5,100])
+animation_database["idle"] = load_animation('media/player_animation/idle', [100, 1, 5, 5, 5, 5, 100])
 
 def change_action(action_var, frame, new_value):
     if action_var != new_value:
         action_var = new_value
         frame = 0
     return action_var, frame
+
 
 player_action = 'idle'
 player_frame = 0
@@ -147,6 +89,7 @@ def collision_test(entity, tiles):
         if entity.colliderect(tile):
             collisions.append(tile)
     return collisions
+
 
 def move(entity, movement, tiles):
     collision_types = {"top": False, "bottom": False, "left": False, "right": False}
@@ -168,7 +111,6 @@ def move(entity, movement, tiles):
             entity.top = tile.bottom
             collision_types["top"] = True
     return entity, collision_types
-
 
 
 def game():
@@ -242,18 +184,17 @@ def game():
         if bomb_timer >= bomb_cooldown and level > 5:
             bomb_timer = 0
             Bomb_objs.append(Bomb(random.choice(possible_cords), -40))
-
-
+        # Laser Object
         for laser in Laser_objs:
-            laser.render()
+            laser.render(DISPLAY)
             laser.move()
             if laser.collision_test(shield_rect) and shield == True:
                 Laser_objs.remove(laser)
             if laser.collision_test(player_rect):
                 gameover = True
-
+        # Croissant Object
         for croissant in Croissant_objs:
-            croissant.render()
+            croissant.render(DISPLAY)
             if croissant.collision_test(player_rect):
                 jump_limit += 1
                 EAT_SOUND.play()
@@ -263,10 +204,9 @@ def game():
             jump_limit = 4
             for i in range(level):
                 Croissant_objs.append(Croissant(random.randint(16, 370), random.randint(14, 270)))
-
+        # Bomb Object
         for bomb in Bomb_objs:
-
-            bomb.render()
+            bomb.render(DISPLAY)
             bomb.move()
             if bomb.collision_test(shield_rect) and shield == True:
                 Bomb_objs.remove(bomb)
@@ -331,7 +271,6 @@ def game():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-
                 if event.key == K_w:
                     jump_count += 1
                     if jump_count <= jump_limit:
@@ -380,8 +319,6 @@ def main_menu():
         pygame.draw.rect(WINDOW, (255, 255, 0), BUTTON2)
 
 
-
-
         mx, my = pygame.mouse.get_pos()
         if BUTTON1.collidepoint((mx, my)):
             pygame.draw.rect(WINDOW, RED, BUTTON1)
@@ -390,7 +327,6 @@ def main_menu():
                 game()
         else:
             pygame.draw.rect(WINDOW, (255, 255, 0), BUTTON1)
-
 
         if BUTTON2.collidepoint((mx, my)):
             pygame.draw.rect(WINDOW, RED, BUTTON2)
@@ -409,7 +345,9 @@ def main_menu():
                     click = True
             if event.type == QUIT:
                 pygame.quit()
+                sys.exit()
 
         pygame.display.flip()
+
 main_menu()
 
