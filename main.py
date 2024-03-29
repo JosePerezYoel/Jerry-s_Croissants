@@ -4,6 +4,7 @@ from pygame.locals import *
 import random
 import sys
 import pygame.freetype
+
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
@@ -37,10 +38,22 @@ GAMEOVER_SOUND = pygame.mixer.Sound("media/sounds/game_over.wav")
 SHIELD_SOUND = pygame.mixer.Sound("media/sounds/shield.wav")
 SHIELD_SOUND.set_volume(0.4)
 EAT_SOUND = pygame.mixer.Sound("media/sounds/eat.wav")
+EAT_SOUND.set_volume(0.4)
+
+# Global key dictionaries
+key_dict_menu = {
+    K_RETURN: "play"
+}
+
+key_dict_game = {
+    K_LSHIFT: "shield",
+    K_RSHIFT: "shield",
+    K_w: "jump",
+    K_a: "move_left",
+    K_d: "move_right"
+}
 
 load_images()
-
-
 def loadBackground(tile, tile_height, tile_width, xcount, ycount, startx=0, starty=0):
     # xcount and ycount is how many tiles you want on both axis
     # start x and start y is where on the window you want to start loading everything
@@ -270,29 +283,35 @@ def game():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == KEYDOWN:
-                if event.key == K_w:
-                    jump_count += 1
-                    if jump_count <= jump_limit:
-                        player_y_momentum = jump
-                        JUMP_SOUND.play()
-                if event.key == K_RSHIFT:
-                    if shield_timer >= 0:
-                        shield = True
-                        SHIELD_SOUND.play()
-                if event.key == K_a:
-                    moving_left = True
-                if event.key == K_d:
-                    moving_right = True
+                if event.key in key_dict_game:
+                    action = key_dict_game[event.key]
+                    if action == "jump":
+                        jump_count += 1
+                        if jump_count <= jump_limit:
+                            player_y_momentum = jump
+                            JUMP_SOUND.play()
+                    elif action == "shield":
+                        if shield_timer >= 0:
+                            shield = True
+                            SHIELD_SOUND.play()
+                    elif action == "move_left":
+                        moving_left = True
+                    elif action == "move_right":
+                        moving_right = True
+
             if event.type == KEYUP:
-                if event.key == K_w:
-                    up = False
-                if event.key == K_RSHIFT:
-                    shield = False
-                if event.key == K_a:
-                    moving_left = False
-                if event.key == K_d:
-                    moving_right = False
+                if event.key in key_dict_game:
+                    action = key_dict_game[event.key]
+                    if action == "jump":
+                        up = False
+                    elif action == "shield":
+                        shield = False
+                    elif action == "move_left":
+                        moving_left = False
+                    elif action == "move_right":
+                        moving_right = False
 
         CLOCK.tick(60)
         pygame.display.flip()
@@ -304,6 +323,7 @@ def main_menu():
     running = True
     pygame.mixer.music.load("media/sounds/game_music.wav")
     pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.4)
     while running:
         gamefont = pygame.freetype.Font("media/font/pixelated.ttf", 20)
         WINDOW.fill(BLACK)
@@ -331,7 +351,7 @@ def main_menu():
         if BUTTON2.collidepoint((mx, my)):
             pygame.draw.rect(WINDOW, RED, BUTTON2)
             gamefont.render_to(WINDOW, (40, 40), "WASD  to  move.", (255, 255, 255))
-            gamefont.render_to(WINDOW, (40, 80), "Right  shift  for  shield.", (255, 255, 255))
+            gamefont.render_to(WINDOW, (40, 80), "Right/Left  shift  for  shield.", (255, 255, 255))
             gamefont.render_to(WINDOW, (40, 120), "JL  stands  for  jump  limit,  eat  croissants  to  increase  it  for  one  level.", (255, 255, 255))
 
         gamefont.render_to(WINDOW, (630, 570), "Made by Jose Perez", (255, 255, 255))
@@ -346,6 +366,12 @@ def main_menu():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == KEYDOWN:
+                if event.key in key_dict_menu:
+                    action = key_dict_menu[event.key]
+                    if action == "play":
+                        pygame.mixer.music.stop()
+                        game()
 
         pygame.display.flip()
 
